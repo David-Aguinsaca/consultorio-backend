@@ -1,6 +1,7 @@
 ﻿using consultorio.Models;
 using consultorio.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -105,9 +106,37 @@ namespace consultorio.Controllers
                 return Ok(new { code = 200, message = "Consulta realizada", data = "Asegurado eliminado" });
             }
 
-            return Ok(new { code = 204, message = "Consulta realizada", data = "Asegurado no encontrado" });
+            return new BadRequestObjectResult(new { code = 404, message = "Consulta realizada", data = "Asegurado no encontrado" });
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile archivo)
+        {
+            if (archivo != null && archivo.Length > 0)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await archivo.CopyToAsync(stream);
+
+                    var fileUpload = new Document
+                    {
+                        Name = archivo.FileName,
+                        Content = stream.ToArray()
+                    };
+
+                    // Guardar el archivo en la base de datos utilizando Entity Framework Core
+                    _context.Documents.Add(fileUpload);
+                    _context.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return Ok(new { code = 200, message = "Consulta realizada", data = "Documento Creado" });
+
+        }
+
 
 
     }

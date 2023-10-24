@@ -6,11 +6,8 @@ namespace consultorio.Models
     {
         [Key]
         public int Iddocument { get; set; }
-
-        [Required(ErrorMessage = "El campo Teléfono es obligatorio.")]
-        public string Url { get; set; }
-        public string? Description { get; set; }
-        public string? Extenextension { get; set; }
+        public string Name { get; set; }
+        public byte[] Content { get; set; }
         public int? Idinsured { get; set; }
         public virtual Insured IdinsuredNavigation { get; set; }
 
